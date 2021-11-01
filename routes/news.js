@@ -14,7 +14,7 @@ router.get('/', async function (req, res, next) {
       xato: "Get News Method Error"
     });
   }
-  
+
 });
 
 router.post('/add', async (req, res, next) => {
@@ -32,35 +32,33 @@ router.post('/add', async (req, res, next) => {
 router.patch('/update', async (req, res, next) => {
   res.setHeader('Content-Type', 'application/json')
   try {
-    const news = await newSchema.updateOne({ title: req.body.title },
-      { $set: { content: req.body.newContent } }
+    const news = await newSchema.findOneAndUpdate({ title: req.body.title },
+      { $set: { title: req.body.newContent }, },{new:true}
     );
-    if(news.modifiedCount != 0){
-      res.send(news + "Updated");
-      res.end();
-    }else{
-      res.send(news +"no updated");
-      res.end();
-    }
+
+    res.json(news);
+    res.end();
+
   } catch (error) {
-      res.send(error);
-      res.end();
+    res.json(error);
+    res.end();
   }
 });
 
-router.delete('/delete',(req,res,next)=>{
+router.delete('/delete', (req, res, next) => {
   try {
-    newSchema.findOneAndDelete({title:req.body.title},(err,data)=>{
-      if(err){
+    newSchema.findOneAndDelete({ title: req.body.title }, (err, data) => {
+      if (err) {
         res.json({
-          xato:err
+          xato: err
         });
-      }else{res.json(data);
+      } else {
+        res.json(data);
       }
-     }
+    }
     );
   } catch (error) {
-    res.json({xato: error})
+    res.json({ xato: error })
   }
 })
 module.exports = router;
